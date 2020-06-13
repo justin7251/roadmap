@@ -22,6 +22,7 @@ class Milestone_View_Model extends View_Model
         `milestone`.`end_date`,
         `milestone`.`completed`,
         `milestone`.`update_at`,
+        DATEDIFF(`milestone`.`end_date`, CURDATE()) AS 'progress',
         COUNT(DISTINCT(`job`.`id`)) AS `jobs`
     FROM
         `milestone`
