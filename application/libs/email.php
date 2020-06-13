@@ -1,0 +1,61 @@
+<?php
+/**
+* /application/libs/email.php
+*
+* PHP Version 5
+*/
+
+/**
+* Email
+*
+* @category Email
+* @package Roadmap
+* @subpackage library
+* @author Justin Leung <myjustinleung19@hotmail.com>
+* @copyright 2020
+* @version Release: 1.0
+*/
+require APP . 'vendor/phpMailer/PHPMailerAutoload.php';
+class Email {
+    static public function sent()
+    {
+        $mail = new PHPMailer;
+
+        // Set mailer to use SMTP
+        $mail->isSMTP();
+        // Specify main and backup SMTP servers
+        $mail->Host = 'localhost';
+        // Enable SMTP authentication
+        $mail->SMTPAuth = false;
+        $mail->Username = '';                 // SMTP username
+        $mail->Password = '';                           // SMTP password
+        $mail->SMTPSecure = 'tls';                            // Enable encryption, 'ssl' also accepted
+
+        $mail->From = 'notifications@live.s2riskwise.com';
+        $mail->FromName = 'Mailer';
+        $mail->addAddress('Justin.Leung@s2partnership.co.uk', 'Justin User');     // Add a recipient
+        // $mail->addAddress('ellen@example.com');               // Name is optional
+        $mail->addReplyTo('info@example.com', 'Information');
+        // $mail->addCC('cc@example.com');
+        // $mail->addBCC('bcc@example.com');
+
+        $mail->WordWrap = 50;                                 // Set word wrap to 50 characters
+        // Add attachments
+        // $mail->addAttachment('/var/tmp/file.tar.gz');
+        // Optional name
+        // $mail->addAttachment('/tmp/image.jpg', 'new.jpg');
+        $mail->isHTML(true);                                  // Set email format to HTML
+
+        $mail->Subject = 'Here is the subject';
+        $mail->Body    = 'This is the HTML message body <b>in bold!</b>';
+        $mail->AltBody = 'This is the body in plain text for non-HTML mail clients';
+
+        if (!$mail->send()) {
+            echo 'Message could not be sent.';
+            echo 'Mailer Error: ' . $mail->ErrorInfo;
+        } else {
+            echo 'Message has been sent';
+        }
+        die;
+    }
+}

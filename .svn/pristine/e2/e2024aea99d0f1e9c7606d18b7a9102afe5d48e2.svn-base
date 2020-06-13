@@ -1,0 +1,157 @@
+<?php
+class Sql {
+    /**
+    * @param object $db A PDO database connection
+    */
+    function __construct($db)
+    {
+        try {
+            $this->db = $db;
+        } catch (PDOException $e) {
+            exit('Database connection could not be established.');
+        }
+    }
+    
+    /**
+    * save function
+    */
+    protected function pdo_save($data)
+    {
+       //`link` = :link, track = :track
+       //$parameters = array(':artist' => $artist, ':track' => $track, ':link' => $link);
+       if (isset($data['id'])) {
+           $id = $data['id'];
+           unset($data['id']);
+           $pdo_raw = $replacements = array();
+           foreach ($data as $key => $value) {
+               $pdo_raw[] = '`' . $key . '` = :' . $key;
+               $replacements[':' . $key] = addslashes($value);
+           }
+          //edit
+          $sql = 'UPDATE ' . $this->_table . ' SET ' . implode(',', $pdo_raw) . ' WHERE `id` = ' . $id;
+        } else {
+           //insert
+           $pdo_raw = $replacements = array();
+           foreach ($data as $key => $value) {
+               $pdo_raw[] = '`' . $key . '`';
+               $replacements[':' . $key] = "'". addslashes($value) . "'";
+           }
+           
+           //add
+           $sql = 'INSERT INTO ' . $this->_table . ' ( ' . implode(',', $pdo_raw) . ' ) VALUE  ' . ' ( ' . implode(',', $replacements) . ' ) ';
+       }
+       $query = $this->db->prepare($sql);
+       return $query->execute($replacements);
+    }
+    
+    /**
+    * multiple save
+    */
+    protected function pdo_multiple_save($data)
+    {
+        //insert
+        $pdo_raw = $replacements = array();
+
+        foreach ($data as $v) {
+            $pdo_raw =  array_keys($v);
+            $data = null;
+            // print_r($v);
+            $data = '( ';
+            $comma = '';
+            foreach($v as $value) {
+                // echo $value . ' , next ';
+                if (is_null($value)) {
+                    $data .= $comma . " NULL";
+                } else {
+                    $data .= $comma . '"' . addslashes($value) . '"';
+                    $comma = ', ';
+                }
+            } 
+            $data .= ' ) ';
+            $replacements[] = $data; 
+        }
+        
+        foreach ($pdo_raw as &$field) {
+            $field = '`' . $field . '`';
+        }
+
+        //add
+        $sql = 'INSERT INTO `roadmap` . `' . $this->_table . '` ( ' . implode(',', $pdo_raw) . ' ) VALUES ' . implode(',', $replacements);
+        $query = $this->db->prepare($sql);
+        return $query->execute($replacements);
+    }
+    
+    
+    /**
+    * Sql get function
+    */
+    protected function pdo_get($fields = array(), $where = array(), $limit = '')
+    {
+        $where_string = '1';
+        $where_statement = array();
+        if (is_array($where) && count($where) > 0 ) {
+            foreach($where as $key => $value) {
+                if (is_array($value)) {
+                    $where_statement[] = "`" . $key . "`" . key($value) . " (" . implode( ',', $value[key($value)] ) . ")";
+                } else {
+                    $where_statement[] = "`" . $key . "` = '" . $value . "'";
+                }
+            }
+            if (count($where_statement) > 0) {
+                $where_string = implode(' AND ', $where_statement);
+            }
+        }
+        
+        if (!empty($fields[0])) {
+            foreach ($fields as &$field) {
+                $field = '`' . $field . '`';
+            }
+        }
+        $sql = "SELECT " . (!empty($fields[0])?  implode(',', $fields) : '*' ) ." FROM `" . $this->_table . "` WHERE " . $where_string .($limit ? ' ' . $limit : '');
+
+        //debug sql
+        $query = $this->db->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
+    
+    /**
+    * delete function
+    */
+    protected function pdo_delete($id)
+    {
+        if (isset($id)) {
+            $sql = "UPDATE " . $this->_table ."
+            SET `deleted` = 1,
+            date_deleted = '" . date("Y-m-d H:i:s") . "'
+            WHERE id = " . $id;
+            // $parameters = array(':id' => $id);
+            $query = $this->db->prepare($sql);
+            return $query->execute();
+        } else {
+            return 'false to delete';
+        }
+    }
+    
+    /**
+    *
+    *
+    * @return void
+    */
+    public function pagination($sql_query, $data_per_Page = '')
+    {
+        //session
+        if (isset($_GET["page_no"])) {
+             $starting_position = ($_GET["page_no"] - 1) * $data_per_Page;
+        }
+        $starting_position = 0;
+        
+        $sql = $sql_query . " limit $starting_position, $data_per_Page";
+        
+        //debug sql
+        // echo $sql;die;
+        $query = $this->db->prepare($sql);
+        $query->execute();
+        return $query->fetchAll();
+    }
+}

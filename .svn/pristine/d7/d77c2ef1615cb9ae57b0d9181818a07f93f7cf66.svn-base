@@ -1,0 +1,425 @@
+<?php
+/**
+* /controller/automation.php
+*
+* PHP Version 5
+*/
+
+/**
+* The controller class for Automation
+*
+* @category Automation
+* @package Roadmap
+* @subpackage Controller
+* @author Justin Leung <justin.leung@s2partnership.co.uk>
+* @copyright 2016-2017 S2 Partnership Ltd.
+* @version Release: 1.0
+*/
+class Automation extends Controller
+{
+    /**
+    * Pre-load method
+    * Permission Control
+    *
+    * @return void
+    */
+    public function __construct()
+    {
+        Access::has_session();
+        if (Access::get_automation_permission() != 'automation_member') {
+            header('location: ' . URL . 'home/index');
+        }
+        parent::__construct();
+        $this->setViewVar('page_title', 'Automation');
+        
+        $status = array('', 'incomplete', 'in_progress', 'waiting_sign_off', 'omitted', 'live', 'future');
+        $assign = array('', 'Justin', 'Dan', 'Wez', 'Abid', 'Lee');
+        $this->setViewVar('status_list', $status);
+        $this->setViewVar('assign_list', $assign);
+    }
+
+    /**
+    * List of Automation in a table form
+    *
+    * @return void
+    */
+    public function index()
+    {
+        $AutomationViewModel = new Automation_View_Model($this->db);
+        $automations = $AutomationViewModel->get(array(), array('deleted' => 0), 'ORDER BY `class_name` ASC');
+        $this->setViewVar('automations', $automations);
+        $current = array();
+        foreach ($automations as $automation) {
+            if ($automation['status'] == 'in_progress') {
+                $current['working'][$automation['assign_to']][] = $automation['class_name'];
+            }
+            if ($automation['status'] == 'waiting_sign_off') {
+                $current['waiting_sign_off'][] = $automation['class_name'];
+            }
+            if ($automation['status'] == 'future') {
+                $current['future_focus'][] = $automation['class_name'];
+            }
+        }
+        $this->setViewVar('current', $current);
+    }
+    
+    /**
+    * Gathering information of a Automation, its include linked code base ticket information
+    *
+    * @return void
+    */
+    public function view($id)
+    {
+        // if we have an id of a automation test that should be edited
+        if (isset($id)) {
+            $automation = $this->model->get_class_info($id);
+            $this->setViewVar('automation', $automation);
+        }
+    }
+    
+    
+    /**
+    * Add Automation test case class
+    *
+    * @return void
+    */
+    public function add()
+    {
+        if (isset($_POST)) {
+            if ($this->model->save($_POST)) {
+                header('location: ' . URL . 'automation/index');
+            }
+        }
+    }
+    
+    /**
+    * Modifies an existing Auotmation record
+    *
+    * @param int automation test case id
+    * @return void
+    */
+    public function edit($id)
+    {
+        if (isset($_POST["id"])) {
+            if ($_POST["status"] == 'waiting_sign_off') {
+                $_POST['completed_by'] = $_SESSION['user']['id'];
+                $_POST['completed_date'] = date("Y-m-d H:i:s");
+            } elseif ($_POST["status"] == 'live') {
+                $_POST['sign_off_by'] = $_SESSION['user']['id'];
+                $_POST['sign_off_date'] = date("Y-m-d H:i:s");
+            }
+            if ($this->model->save($_POST)) {
+                header('location: ' . URL . 'automation/index');
+            }
+        }
+        // if we have an id of a automation test that should be edited
+        if (isset($id)) {
+            $automation = current($this->model->get($this->model->_fields, array('id' => $id)));
+            
+            if ($automation) {
+                $this->setViewVar('automation', $automation);
+                return;
+            }
+        }
+        header('location: ' . URL . 'automation/index');
+    }
+    
+    /**
+    * Modifies an existing Auotmation record
+    *
+    * @param int automation test case id
+    * @return void
+    */
+    public function measurement_edit($id)
+    {
+        if (isset($_POST["id"])) {
+            if ($this->model->save($_POST)) {
+                header('location: ' . URL . 'automation/measure');
+            }
+        }
+        // if we have an id of a automation test that should be edited
+        if (isset($id)) {
+            $automation = current($this->model->get($this->model->_fields, array('id' => $id)));
+            
+            if ($automation) {
+                $this->setViewVar('automation', $automation);
+                
+                return;
+            }
+        }
+        header('location: ' . URL . 'automation/measure');
+    }
+    
+    /**
+    * Modifies an existing Auotmation measure
+    *
+    * @return void
+    */
+    public function measure()
+    {
+        $AutomationViewModel = new Automation_View_Model($this->db);
+        $this->setViewVar('automations', $AutomationViewModel->get(array()));
+    }
+    
+    /**
+    *
+    */
+    public function statistics()
+    {
+        $Api = new Api();
+        $data = $Api->getJenkins(0);
+        if (isset($data) && $data[0]['Skipped']) {
+            $this->setViewVar('statistics', $data[0]);
+        }
+        // get bugability scores
+        $Bugability_Model = new Bugability_Model($this->db);
+        // not include emergency_patch and dev only tags ticket
+        $current_live_bugability = $Bugability_Model->raw_query("
+            SELECT
+                sum(`bugability_score`) AS `bugability_score`
+            FROM
+                `bugability`
+            WHERE
+                `tags` NOT LIKE '%emergency_patch%' AND `tags` NOT LIKE '%dev_only%';");
+        $current_dev_bugability = $Bugability_Model->raw_query("SELECT sum(`bugability_score`)  AS `bugability_score` FROM `bugability` WHERE `status` != 'Completed';");
+        $projected_live_bugability = $Bugability_Model->raw_query("
+            SELECT
+                sum(bugability_score) AS `bugability_score`
+            FROM
+                `bugability`
+            WHERE
+                `bugability`.`code_base_milestone_id` NOT IN (
+                        SELECT
+                            (`milestone`.`id`)
+                        FROM
+                            `milestone`
+                        WHERE
+                            `milestone`.`project_id` = 8
+                        AND
+                            `milestone`.`actual_date` >= NOW()
+                        AND
+                            `milestone`.`name` NOT IN ('On Hold', 'Unallocated')
+                )
+            AND
+                `tags` NOT LIKE '%emergency_patch%' AND `tags` NOT LIKE '%dev_only%'");
+        $this->setViewVar('current_live_bugability', current($current_live_bugability)['bugability_score']);
+        $this->setViewVar('current_dev_bugability', current($current_dev_bugability)['bugability_score']);
+        $this->setViewVar('projected_live_bugability', current($projected_live_bugability)['bugability_score']);
+    }
+    
+    /**
+    *
+    */
+    public function document()
+    {
+        
+    }
+    
+    /**
+    * Qtest Import
+    *
+    * @return void
+    */
+    public function qtest_import()
+    {
+       if (isset($_POST["file_upload"])) {
+            $file = getcwd() . '/uploads/' . $_POST['file_path'];
+            // open file from path
+            if (file_exists($file) && ($handle = fopen($file, "r")) !== FALSE) {
+                $class_name = '';
+                $i = 0;
+                $import_data = array();
+                while (($data = fgetcsv($handle, 2000, ",")) !== FALSE) {
+                    if (preg_match('/Title/', $data[0]) && preg_match('/Section/', $data[1])) {
+                        continue;
+                    }
+                    //class name
+                    $import_data[$i][0] = str_replace('- ', '', urldecode(str_replace('%EF%BB%BF+', '', urlencode(trim(preg_replace('/MD-[0-9]+/', '', $data[1]))))));
+                    // method name
+                    $import_data[$i][1] = str_replace(' ', '', str_replace('&', '_', str_replace('/', '_', str_replace('-', '_', $data[0]))));
+                    $i++;
+                }
+                $Qtest_Model = new Qtest_Model($this->db);
+                $Qtest_Model->import($import_data);
+                fclose($handle);
+            }
+        }
+    }
+    
+    /**
+    * Import Jenkins xml (required save as csv)
+    * Tab
+    *
+    */
+    public function jenkins_import()
+    {
+       if (isset($_POST["file_upload"])) {
+            $file = getcwd() . '/uploads/' . $_POST['file_path'];
+            
+            $all_classnames = $this->model->raw_query("SELECT DISTINCT `class_name` FROM `qtest`");
+            $classnames = array();
+            foreach ($all_classnames as $class_name) {
+                $classnames[strtolower(str_replace(' ', '', $class_name['class_name']))] = $class_name['class_name'];
+            }
+
+            if (file_exists($file) && ($handle = fopen($file, "r")) !== FALSE) {
+                $class_name = '';
+                $import_data = array();
+                while (($data = fgetcsv($handle, 2000, ",")) !== FALSE) {
+                    if (preg_match('/ok/',$data[0])) {
+                        // get string after - 
+                        $data = trim(substr($data[0], strpos($data[0], "-") + 1));
+                        if (preg_match('/SKIP/',$data)) {
+                            $function_name = substr($data, strpos($data, "for") + 4);
+                            // 'testIncidentForm_View does not exist.'
+                            $function_parts = explode(' does not exist.', $function_name);
+                            $automation_test_name = explode('_', $function_parts[0]);
+                            // 'incidentform'
+                            $potential_class_name = strtolower(str_replace('test', '', $automation_test_name[0]));
+                            $name = (in_array($potential_class_name, array_keys($classnames))) ? $classnames[$potential_class_name] : 'Skip';
+                            $function_name = str_replace('test', '', $function_parts[0]); // 'View'
+                            $status = 'Skip';
+                        } elseif (preg_match('/TODO/',$data)) {
+                            $full_name = substr($data, strrpos($data, "\\") + 1);
+                            $name = substr($full_name, 0, strrpos($full_name, ":") -1);
+                            $full_function_name = str_replace('test', '', substr($full_name, strrpos($full_name, ":") + 1));
+                            $full_function_name = explode(' ', $full_function_name);
+                            $function_name = $full_function_name[0];
+                            $status = 'Todo';
+                        } else {
+                            $full_name = substr($data, strrpos($data, "\\") + 1);
+                            $name = substr($full_name, 0, strrpos($full_name, ":") -1);
+                            $function_name = str_replace('test', '', substr($full_name, strrpos($full_name, ":") + 1));
+                            $status = 'Completed';
+                        }
+                        if ($function_name == 'Logout') {
+                            continue;
+                        }
+                        if (preg_match('/Settings/', $name) == 1) {
+                            $name = 'Settings';
+                        }
+                        $import_data[] = array(
+                            'class_name' => preg_replace('/(?<=[a-zA-Z])(?=[A-Z])/', ' ', $name),
+                            'function' => $function_name,
+                            'status' => $status,
+                            'date_import' => date('Y-m-d H:i:s')
+                        );
+                    }
+                }
+                if (count($import_data) > 0) {
+                    $Tap_Model = new Tap_Model($this->db);
+                    // Delete Existing Data
+                    $Tap_Model->raw_query("DELETE FROM `tap`");
+                    if ($Tap_Model->multiple_save($import_data)) {
+                        echo '<h1>Update Successfully </h1>';
+                    }
+                }
+                fclose($handle);
+            }
+        }
+    }
+    
+    /**
+    * Import Progress Status xml (required save as csv)
+    * Tab
+    *
+    */
+    public function progress_status_import()
+    {
+       if (isset($_POST["file_upload"])) {
+            $file = getcwd() . '/uploads/' . $_POST['file_path'];
+
+            if (file_exists($file) && ($handle = fopen($file, "r")) !== FALSE) {
+                $class_name = '';
+                $import_data = array();
+                while (($data = fgetcsv($handle, 2000, ",")) !== FALSE) {
+                    if (preg_match('/ok/',$data[0])) {
+                        // get string after - 
+                        $data = trim(substr($data[0], strpos($data[0], "-") + 1));
+                        if (preg_match('/SKIP/',$data)) {
+                            $function_name = substr($data, strpos($data, "for") + 4);
+                            // 'testIncidentForm_View does not exist.'
+                            $function_parts = explode(' does not exist.', $function_name);
+                            $automation_test_name = explode('_', $function_parts[0]);
+                            // 'incidentform'
+                            $potential_class_name = strtolower(str_replace('test', '', $automation_test_name[0]));
+                            $name = $potential_class_name;
+                            $function_name = str_replace('test', '', $function_parts[0]); // 'View'
+                            $status = 'Skip';
+                        } elseif (preg_match('/TODO/',$data)) {
+                            $full_name = substr($data, strrpos($data, "\\") + 1);
+                            $name = substr($full_name, 0, strrpos($full_name, ":") -1);
+                            $full_function_name = str_replace('test', '', substr($full_name, strrpos($full_name, ":") + 1));
+                            $full_function_name = explode(' ', $full_function_name);
+                            $function_name = $full_function_name[0];
+                            $status = 'Todo';
+                        } else {
+                            $full_name = substr($data, strrpos($data, "\\") + 1);
+                            $name = substr($full_name, 0, strrpos($full_name, ":") -1);
+                            $function_name = str_replace('test', '', substr($full_name, strrpos($full_name, ":") + 1));
+                            if ($function_name == 'Logout') {
+                                continue;
+                            }
+                            $status = 'Completed';
+                        }
+                        $import_data[] = array(
+                            'class_name' => preg_replace('/(?<=[a-zA-Z])(?=[A-Z])/', ' ', $name),
+                            'function' => $function_name,
+                            'status' => $status,
+                            'import_date' => date('Y-m-d H:i:s')
+                        );
+                    }
+                }
+                if (count($import_data) > 0) {
+                    $Progress_Status_Model = new Progress_Status_Model($this->db);
+                    // Delete Existing Data
+                    $Progress_Status_Model->raw_query("DELETE FROM `progress_status`");
+                    if ($Progress_Status_Model->multiple_save($import_data)) {
+                        echo '<h1>Update Successfully </h1>';
+                    }
+                }
+                fclose($handle);
+            }
+        }
+    }
+    
+    /**
+    * Import JUnit Import 
+    * No view yet
+    *
+    */
+    public function junit_import()
+    {
+       if (isset($_POST["file_upload"])) {
+            $file = getcwd() . '/uploads/' . $_POST['file_path'];
+            
+            //open file from path
+            if (file_exists($file) && ($xml = simplexml_load_file($file)) !== FALSE) {
+                if ($data = $this->parse_junit_xml($xml)) {
+                    $Junit_Model = new Junit_Model($this->db);
+                    // Delete Existing Data
+                    $Junit_Model->raw_query("DELETE FROM `junit`");
+                    if ($Junit_Model->multiple_save($data)) {
+                        echo '<h1>Update Successfully </h1>';
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+    *
+    */
+    private function parse_junit_xml($xml)
+    {
+        $data = array();
+        $i = 0;
+        foreach ($xml->testsuite->testsuite as $tests){
+            foreach ($tests->testcase->attributes() as $key => $val) {
+                $data[$i][$key] = (string) $val;
+            }
+            $i++;
+        }
+        return $data;
+    }
+}

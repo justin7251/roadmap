@@ -1,0 +1,81 @@
+<?php
+if ($statistics) {
+    $stat_data = array();
+    foreach ($statistics as $key => $value) {
+        if ($key == 'Incomplete') {
+            $key_label = 'Omitted';
+        } elseif ($key == 'Skipped') {
+            $key_label = 'Outstanding';
+        } else {
+            $key_label = 'Completed';
+        }
+        $stat_data[] = '["' . $key_label . '", ' . $value .']';
+    }
+}
+
+echo '
+<div class="container margin-top-10 full-height">
+    <div class="navbar">
+        <h3 class="home_title"><strong>QA Status</strong> <i></i></h3>';
+        echo $form->right_menu($this->projects, $this->current_project_id, 'home');
+echo '</div>';
+    
+echo '
+    <div class="container margin-top-30">
+        <div id="chart_div" class="full-height" style="float:left;width: 900px; height: 500px;"></div>
+        <div id="bugability_stat">';
+        echo $form->button(
+            array(
+                'id' => '',
+                'class' => 'no_decoration',
+                'target' => true,
+                'btn-class' => 'btn-primary',
+                'title' => 'Import bugability score',
+                'url' => 'api/getBugability'
+            ),
+            'glyphicon-download',
+            'Get Bugability Scores'
+        );
+        echo '
+            <h4 ><a class="" href="">Bugability</a></h4>
+            <table class="bugability_table">
+                <thead>
+                    <tr>
+                        <th class="col-md-3"><span>Current Live bugability</span></th>
+                        <th class="col-md-3"><span>Current Dev bugability</span></th>
+                        <th class="col-md-3"><span>Projected Live bugability</span></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="col-md-3 '. ($current_live_bugability > 50 ? 'fail' : '') .'"><span class="bugability_score">' . $current_live_bugability . '</span></td>
+                        <td class="col-md-3 '. ($current_dev_bugability > 50 ? 'fail' : '') .'"><span class="bugability_score">' . $current_dev_bugability . '</span></td>
+                        <td class="col-md-3 '. ($projected_live_bugability > 50 ? 'fail' : '') .'"><span class="bugability_score">' . $projected_live_bugability . '</span></td>
+                    </tr>
+                </tbody>
+            </table>
+            <span>Last Update: '.$last_updated.'</span>
+        </div>
+    </div>
+</div>';
+?>
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+      google.charts.load("current", {packages:["corechart"]});
+      google.charts.setOnLoadCallback(drawChart);
+      function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Type');
+        data.addColumn('number', 'Test');
+        data.addRows(<?php echo '[' . PHP_EOL . implode(',' . PHP_EOL, $stat_data) . PHP_EOL . ']'; ?>);
+
+        var options = {
+          title: 'Automation Written Test Case',
+          is3D: true
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('chart_div'));
+        chart.draw(data, options);
+      }
+
+</script>
