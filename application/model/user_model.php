@@ -28,47 +28,13 @@ class User_Model extends Model
     }
     
     //check user in database
-    function check_user_exist($post)
+    public function check_user_exist($post)
     {
         if ($this->get(array('id'), array('email' => $post['email']))) {
             return true;
         } else {
             return false;
         }
-    }   
-
-    function check_reset_link($post)
-    {
-        $check = $this->get(array('id'), array('reset_link' => $post));
-        if ($check) {
-            return $check;
-        } else {
-            return false;
-        }
-    }
-    
-    function sent_reset($post, $check_email = array())
-    {
-        $email_from = 'notifications@live.s2riskwise.com';
-        $email_to = $post['email'];
-        $email_subject= 'Reset Password';
-        $url = md5($_POST['email']. time());
-        $email_message = '/user/reset/' . $url ;
-
-        $headers[] = 'MIME-Version: 1.0';
-        $headers[] = 'Content-type: text/html; charset=UTF-8';
-        $headers[] = 'To: '. $email_to;
-        $headers[] = 'From: '. $email_from;
-
-        // $result = mail($email_to, $email_subject, $email_message, implode("\r\n", $headers));
-        // if (!$result) {
-            // $error = '<span class="error">There is a problem from sending email.</span>';
-        // }
-        
-        Email::sent();
-
-        // parent::save(array('id' => $check_email->id , 'reset_link' => $url));
-        return 'success';
     }
     
     public function save($post)

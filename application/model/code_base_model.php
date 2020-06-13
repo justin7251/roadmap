@@ -312,26 +312,6 @@ class Code_Base_Model
         }
     }
     
-    public function updateJobTickets($project_name, $job)
-    {
-        if ($job['code_base_tag'] != NULL && strlen($job['code_base_tag']) > 0) {
-            $tickets = $this->getTicketsByTag($project_name, $job['code_base_tag']);
-            foreach($tickets as $ticket) {
-                if (!$ticket['ticket-id'] || $job['milestone_id'] < 1 || $ticket['milestone-id'] == $job['milestone_id']) {
-                    continue;
-                }
-                $url = 'https://api3.codebasehq.com/' . $project_name . '/tickets/' . $ticket['ticket-id'] .  '/notes';
-                $data = '<ticket-note>
-                            <content>Milestone automatically updated by ' . Session::get('user.first_name') . ' ' . Session::get('user.last_name') . ', using the S2 Roadmap Application</content>
-                            <changes>
-                                <milestone-id>' . $job['milestone_id'] . '</milestone-id>
-                            </changes>
-                         </ticket-note>';
-                         
-                $this->update_code_base_data($url, $data);
-            }
-        }
-    }
     
     
     public function getJobTickets($project_name, $job)
@@ -425,55 +405,4 @@ class Code_Base_Model
         prr($tickets);die;
 
     }
-
-    /**
-    * cURL setup function, from posting data from codebase connection
-    * cURL Post
-    *
-    * @param string $url
-    * @param int $ticket_id
-    * @param int $code_base_id
-    * @return void
-    */
-    public function update_code_base_data($url, $data)
-    {
-        $auth = 's2-partnership-ltd/systems-analysis-pool-87:32fc1c7f9f502e75ede1e60b960c1c0f0ccbfef8';
-        $headers = array('Accept: application/xml', 'Content-type: application/xml');
-
-        $ch = curl_init(); 
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_USERPWD, $auth);
-        curl_setopt($ch, CURLOPT_POST,TRUE);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER , true);
-        $result = curl_exec ($ch);
-        curl_close ($ch);
-    }
-    
-    /**
-    * cURL setup function, from getting data from codebase connection
-    * cURL Get
-    *
-    * @param string $url
-    * @return array data
-    */
-    public function get_code_base_data($url = null)
-    {
-        $auth = 's2-partnership-ltd/systems-analysis-pool-87:32fc1c7f9f502e75ede1e60b960c1c0f0ccbfef8';
-        $headers = array('Accept: application/xml', 'Content-type: application/xml');
-        $out = array();
-        
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_USERPWD, $auth);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-        $result = curl_exec($ch);
-        curl_close($ch);
-              
-        $myxml = simplexml_load_string($result);
-        return $this->get_xml_array($myxml);
-    }
-
 }

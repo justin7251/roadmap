@@ -23,7 +23,8 @@ class Form
         }
 
         if (isset($projects)) {
-            foreach($projects as $project) {
+            $other_projects= array();
+            foreach ($projects as $project) {
                 if ($project['id'] == $current_project_id) {
                     $current_project = $project['description'];
                 } else {
@@ -50,18 +51,12 @@ class Form
 
         echo '
                       <ul class="dropdown-menu pull-right">
-                            <li class="user_dropdown_right"><a href="/user/index"><i class="glyphicon glyphicon-cog pull-right"></i>Account Settings</a></li>
-                            <li class="user_dropdown_right"><a href="/quality_assurance/statistics"><i class="glyphicon glyphicon-signal pull-right"></i>QA Status</a></li>';
+                            <li class="user_dropdown_right"><a href="/user/index"><i class="glyphicon glyphicon-cog pull-right"></i>Account Settings</a></li>';
                         
         if (Access::get_permission() == 'admin') {
             echo '
                             <li class="user_dropdown_right"><a href="/user/manage"><i class="glyphicon glyphicon-th pull-right"></i>User Management</a></li>';
         }
-        if (Access::get_automation_permission() == 'automation_member') {
-            echo '
-                <li class="user_dropdown_right"><a href="/automation/"><i class="glyphicon glyphicon-tasks pull-right"></i>Automation</a></li>';
-        }
-        
         echo '
                             <li class="user_dropdown_right"><a href="/user/logout"><i class="glyphicon glyphicon-log-out pull-right"></i>Sign Out</a></li>
                         </ul>

@@ -26,9 +26,6 @@ class Qtest extends Controller
     public function __construct()
     {
         Access::has_session();
-        if (Access::get_automation_permission() != 'automation_member') {
-            header('location: ' . URL . 'home/index');
-        }
         parent::__construct();
     }
 }

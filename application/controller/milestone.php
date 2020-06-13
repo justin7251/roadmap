@@ -30,7 +30,7 @@ class Milestone extends Controller
         if (Access::get_permission() != ('admin' || 'limited')) {
             header('location: ' . URL . 'home/index');
         }
-        $this->setViewVar('page_title', 'CodebaseHQ Milestones');
+        $this->setViewVar('page_title', 'Milestones');
     }
     
     /**
@@ -40,7 +40,13 @@ class Milestone extends Controller
     */
     public function index()
     {
-        $this->setViewVar('milestones', $this->model->get(array(), array('project_id' => array('IN' => array(Session::get('current_project_id'))), 'active' => 'Y')));
+        $this->setViewVar(
+            'milestones',
+            $this->model->get(
+                array(),
+                array('project_id' => array('IN' => array(Session::get('current_project_id'))), 'active' => 'Y')
+            )
+        );
     }
     
     /**
@@ -61,6 +67,35 @@ class Milestone extends Controller
         }
         header('location: ' . URL . 'milestone/index');
     }
+
+    /**
+    * Add Milestone
+    *
+    * @return void
+    */
+    public function add()
+    {
+        if (Access::get_permission() != ('admin' || 'limited')) {
+            header('location: ' . URL . 'milestone/index');
+        }
+        // if we have POST data to create a new user entry
+        if (isset($_POST["submit_add_milestone"])) {
+            $_POST["create_at"] = date("Y-m-d H:i:s");
+            if ($this->model->save($_POST)) {
+                header('location: ' . URL . 'milestone/index');
+            }
+        }
+        //add WYSIWYG editor
+        $this->setViewVar('controller_css', array('bootstrap-wysihtml5.css'));
+        $this->setViewVar('controller_js', array('wysihtml5-0.3.0.min.js', 'bootstrap-wysihtml5.js'));
+        $this->setViewVar('priorities', array('1. Must Have', '2. Should Have', '3. Could Have', '4. Would Have'));
+        $this->setViewVar('confidence_level', array('1. High', '2. Medium', '3. Low'));
+        
+        // get all Milestone names
+        $Milestone_Model = new Milestone_Model($this->db);
+        $this->setViewVar('milestones', $Milestone_Model->get(array('id','name'), array('project_id' => Session::get('current_project_id')), 'AND active = "Y"'));
+    }
+    
     
     /**
     * Modify existing milestone data

@@ -51,13 +51,13 @@ define('URL', URL_PROTOCOL . URL_DOMAIN . URL_SUB_FOLDER);
  */
 define('DB_TYPE', 'mysql');
 define('DB_HOST',  ($_SERVER['HTTP_HOST'] == 'localhost' ?  '127.0.0.1' : 'localhost'));
-if ($_SERVER['HTTP_HOST'] == 'devroadmap.s2qa.com') {
+if (strpos($_SERVER['HTTP_HOST'], '.com') == true) {
     define('DB_NAME', 'roadmap_dev');
 } else {
     define('DB_NAME', 'roadmap');
 }
 define('DB_USER', ($_SERVER['HTTP_HOST'] == 'localhost' ?  'root' : 'roadmap'));
-define('DB_PASS', ($_SERVER['HTTP_HOST'] == 'localhost' ?  '' : 'S2R04dmAp'));
+define('DB_PASS', ($_SERVER['HTTP_HOST'] == 'localhost' ?  '' : '4dmAp'));
 define('DB_CHARSET', 'utf8');
 
 

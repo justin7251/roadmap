@@ -12,27 +12,27 @@ echo '
     <div class="form-group col-md-10 col-sm-12">
         <form action="/job/index" method="POST" class="form-inline">';
 
-        if (isset($projects)) {
-            echo '
-            <div class="form-group filter_selection">
-                <label>Project</label>
-                <select name="project_id" class="form-control">
-                    <option value="">All</option>';
-                foreach($projects as $project) {
-                    echo '<option value="'. $project['id'] .'" ' . (isset($project_id) ? ($project_id == $project['id'] ? 'selected': '') : (Session::get('current_project_id') ? (Session::get('current_project_id') == $project['id'] ? 'selected': '') : '')) . '>' . $project['description'] . '</option>';
-                }
-                echo '</select>
-                </div>';
-        }
+if (isset($projects)) {
+    echo '
+    <div class="form-group filter_selection">
+        <label>Project</label>
+        <select name="project_id" class="form-control">
+            <option value="">All</option>';
+    foreach ($projects as $project) {
+        echo '<option value="'. $project['id'] .'" ' . (isset($project_id) ? ($project_id == $project['id'] ? 'selected': '') : (Session::get('current_project_id') ? (Session::get('current_project_id') == $project['id'] ? 'selected': '') : '')) . '>' . $project['description'] . '</option>';
+    }
+        echo '</select>
+        </div>';
+}
 
 echo '
             <div class="form-group filter_selection">
                 <label>Epic Priority</label>
                 <select name="priority" class="form-control">
                     <option value="">All</option>';
-                    foreach ($priority_type as $value) {
-                        echo '<option value="'. $value .'" ' . (isset($priority) ? ($priority == $value ? 'selected': '') : '') . '>' . $value . '</option>';
-                    }
+foreach ($priority_type as $value) {
+    echo '<option value="'. $value .'" ' . (isset($priority) ? ($priority == $value ? 'selected': '') : '') . '>' . $value . '</option>';
+}
             echo '
                 </select>
             </div>
@@ -40,9 +40,9 @@ echo '
                 <label>Status</label>
                 <select name="status" class="form-control">
                     <option value="">All</option>';
-                    foreach ($status_type as $value) {
-                        echo '<option value="'. $value .'" ' . (isset($status) ? ($status == $value ? 'selected': '') : '') . '>' . $value . '</option>';
-                    }
+foreach ($status_type as $value) {
+    echo '<option value="'. $value .'" ' . (isset($status) ? ($status == $value ? 'selected': '') : '') . '>' . $value . '</option>';
+}
             echo '
                 </select>
             </div>
@@ -50,9 +50,9 @@ echo '
                 <label>Confidence Level</label>
                 <select name="confidence_level" class="form-control">
                     <option value="">All</option>';
-                    foreach ($confidence_level_type as $value) {
-                        echo '<option value="'. $value .'" ' . (isset($confidence_level) ? ($confidence_level == $value ? 'selected': '') : '') . '>' . $value . '</option>';
-                    }
+foreach ($confidence_level_type as $value) {
+    echo '<option value="'. $value .'" ' . (isset($confidence_level) ? ($confidence_level == $value ? 'selected': '') : '') . '>' . $value . '</option>';
+}
                 echo '
                 </select>
             </div>
@@ -60,9 +60,9 @@ echo '
                 <label>Milestones</label>
                 <select name="active_milestone" class="form-control">
                     <option value="">All</option>';
-                    foreach ($active_type as $key => $value) {
-                        echo '<option value="'. $key .'" ' . (isset($active_milestone) ? ($active_milestone == $key ? 'selected': '') : '') . '>' . $value . '</option>';
-                    }
+foreach ($active_type as $key => $value) {
+    echo '<option value="'. $key .'" ' . (isset($active_milestone) ? ($active_milestone == $key ? 'selected': '') : '') . '>' . $value . '</option>';
+}
                 echo '
                 </select>
             </div>
@@ -86,7 +86,6 @@ if (Access::get_permission() == ('admin' || 'limited')) {
             'Get CodebaseHQ Data'
         );
     }
-    
     echo $form->button(
         array(
             'btn-class' => 'btn-primary pull-right btn-adjust-margin',
@@ -120,7 +119,7 @@ if ($jobs) {
         <tbody>';
 
     if (is_array($jobs) && count($jobs) > 0) {
-        foreach($jobs as $job) {
+        foreach ($jobs as $job) {
             echo '
             <tr id="drag_drop_item_' . $job['id'] . '">
                 <td>' . $job['name'] . '</td>

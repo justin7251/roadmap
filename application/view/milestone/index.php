@@ -2,10 +2,21 @@
 echo '
 <div class="container margin-top-10">
     <div class="nav">
-        <h3 class="home_title"><strong>' . ucwords(str_replace('-', ' ', Session::get('current_project_description'))) . '</strong> CodebaseHQ Milestones</h3>';
+        <h3 class="home_title"><strong>' . ucwords(str_replace('-', ' ', Session::get('current_project_description'))) . '</strong> Milestones</h3>';
     echo $form->right_menu($this->projects, $this->current_project_id, 'milestone');
+        
 echo '
     </div>';
+    echo $form->button(
+        array(
+            'btn-class' => 'btn-primary pull-right btn-adjust-margin',
+            'title' => 'Create a new Epic',
+            'url' => 'milestone/add'
+        ),
+        'glyphicon-plus',
+        'Add Milestone'
+    );
+    
 if ($milestones) {
     echo '
     <table class="table sortable">
@@ -27,8 +38,8 @@ if ($milestones) {
                 <td>' . $milestone['name'] . '</td>
                 <td>' . $milestone['description'] . '</td>
                 <td>' . $milestone['story_points'] . '</td>
-                <td>' . ($milestone['start_date'] == NULL ? 'Not Set' : $form->date_time_format($milestone['start_date'])) . '</td>
-                <td>' . ($milestone['actual_date'] == NULL ? 'Not Set' : $form->date_time_format($milestone['actual_date'])) . '</td>
+                <td>' . ($milestone['start_date'] == null ? 'Not Set' : $form->date_time_format($milestone['start_date'])) . '</td>
+                <td>' . ($milestone['actual_date'] == null ? 'Not Set' : $form->date_time_format($milestone['actual_date'])) . '</td>
                 <td>' . $form->button(array('btn-class' => 'btn-info', 'title' => 'View details for this Milestone', 'url' => 'milestone/view/' . $milestone['id']), 'glyphicon-zoom-in') . '</td>';
                         
         if (Access::get_permission() == ('admin' || 'limited')) {
@@ -40,6 +51,6 @@ if ($milestones) {
     echo '
           </tbody>
         </table>';
-}       
+}
 echo '
 </div>';

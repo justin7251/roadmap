@@ -148,25 +148,6 @@ class User extends Controller
         $this->setViewVar('user', current($this->model->get(null, array('id' => $id))));
         $this->setViewVar('error', $this->checkError());
     }
-    
-    /**
-    * Reset Password
-    *
-    * @param int $key reset key
-    * @return void
-    */
-    public function reset($key)
-    {
-        if ($this->checkError()) {
-            $error = $this->checkError();
-        }
-        if (isset($key)) {
-            if ($user = $this->model->check_reset_link($key)) {
-                return;
-            }
-        }
-        print_r('bad');
-    }
 
     /**
     * Check Password match
@@ -195,6 +176,7 @@ class User extends Controller
     */
     public function login_post()
     {
+        prr(URL);
         // if we have POST data to create a new user entry
         if (isset($_POST["submit_compare_user"])) {
             if ($this->model->check_password($_POST)) {
@@ -210,6 +192,7 @@ class User extends Controller
                 Session::set('user', $user);
                 $user_level = $this->model->raw_query("SELECT * FROM `user_level`");
                 Session::set('user_level', $user_level);
+
                 header('location: ' . URL);
             } else {
                 $this->error = 'You have entered an invalid username or password';

@@ -150,7 +150,6 @@ class Job extends Controller
         }
         if (isset($_POST["id"])) {
             if ($this->model->save($_POST)) {
-                $this->importCodeBaseTickets($_POST);
                 header('location: ' . URL . 'job/' . ($from_view ? 'view/' . $_POST['id'] : 'index'));
             }
         }
@@ -190,7 +189,6 @@ class Job extends Controller
         if (isset($_POST["name"])) {
             $_POST["create_at"] = date("Y-m-d H:i:s");
             if ($this->model->save($_POST)) {
-                $this->importCodeBaseTickets($_POST);
                 header('location: ' . URL . 'job/' . ($from_view ? 'view/' . $_POST['id'] : 'index'));
             }
         }
@@ -230,7 +228,6 @@ class Job extends Controller
         if (isset($_POST["submit_add_job"])) {
             $_POST["create_at"] = date("Y-m-d H:i:s");
             if ($this->model->save($_POST)) {
-                $this->importCodeBaseTickets($_POST);
                 header('location: ' . URL . 'job/index');
             }
         }
@@ -265,22 +262,6 @@ class Job extends Controller
     }
 
     /**
-    * Import Code bast ticket to the system and create job mapping
-    *
-    * @param array $job that used to find the code base ticket
-    * @return void
-    */
-    private function importCodeBaseTickets($job)
-    {
-        if (!isset($job['id'])) {
-            $job['id'] = $this->db->lastInsertId();
-        }
-        // Import code base ticket
-        $Code_Base_Model = new Code_Base_Model($this->db);
-        $tickets = $Code_Base_Model->importTicketsByTag(Session::get('current_project_name'), $job['code_base_tag'], $job['id']);
-    }
-
-    /**
     * Update Project Roadmap ordering
     *
     * @param int $milestone_id that used to ordering the Job position on home/roadmap
@@ -304,47 +285,5 @@ class Job extends Controller
                 }
             }
         }
-    }
-    
-    /**
-    * Update tikcet status by posting the job id to codebase and get the newest data
-    *
-    * @param int $id Job id
-    * @return void
-    */
-    public function update_ticket_status($id)
-    {
-        if (!isset($id)) {
-            return false;
-        }
-        $job = $this->model->raw_query("SELECT `id`,`code_base_tag` FROM `job` WHERE `id` = " . $id);
-        if (isset($job[0]['id'])) {
-            $this->importCodeBaseTickets($job[0]);
-        }
-    }
-    
-    /**
-    * Create a html a tag that link to the acutal ticket
-    *
-    * @return array
-    */
-    public function get_code_base_job($jobs, $project_name)
-    {
-        if ($jobs && $project_name) {
-            $all_job = '';
-            //if project name with space replace
-            $project_name = str_replace(' ', '-', $project_name);
-            
-            $code_base_jobs = explode(",", $jobs);
-
-            foreach ($code_base_jobs as $code_base_job) {
-                $code_base_job = trim($code_base_job);
-                //skip the empty string and wasn't a blank string 
-                if (isset($code_base_job) && $code_base_job != '&nbsp;') {
-                    $all_job .= '<a href="http://software.s2partnership.co.uk/projects/' . $project_name . '/jobs/' . $code_base_job .'" TARGET="_blank">' . 'job ' . $code_base_job . '</a><br>';
-                }
-            }
-        }
-        return $all_job;
     }
 }

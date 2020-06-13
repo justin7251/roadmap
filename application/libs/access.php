@@ -46,24 +46,4 @@ class Access {
             die;
         }
     }
-    
-    public static function get_automation_permission()
-    {
-        $automation_user_list = array(
-            'dan.warnock@s2partnership.co.uk',
-            'justin.leung@s2partnership.co.uk',
-            'wez.edwards@s2partnership.co.uk',
-            'abid.riaz@s2partnership.co.uk',
-            'peter.brightwell@s2partnership.co.uk',
-            'james.barham@s2partnership.co.uk',
-            'rob.mead@s2partnership.co.uk',
-            'lee.zerafa@s2partnership.co.uk'
-        );
-        
-        if (in_array($_SESSION['user']['email'], $automation_user_list)) {
-            return 'automation_member';
-        } else {
-            return false;
-        }
-    }
 }

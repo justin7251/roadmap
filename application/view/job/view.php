@@ -96,16 +96,6 @@ if (isset($code_base_data[0]['ticket-id'])) {
     echo '
     <div>
         <div class="button_container pull-right">';
-        
-    echo $form->button(
-        array(
-            'btn-class' => 'btn-primary',
-            'title' => 'Import CodebaseHQ Tickets Data',
-            'class' => 'update_ticket_status margin-left-5'
-        ),
-        'glyphicon-import',
-        'Import CodebaseHQ Tickets Data'
-    );
     
     echo '
         </div>
@@ -123,7 +113,7 @@ if (isset($code_base_data[0]['ticket-id'])) {
             </thead>
             <tbody>';
 
-    $code_base_url = 'http://software.s2partnership.co.uk/projects/'. Session::get('current_project_name') .'/tickets/';
+    $code_base_url = Session::get('current_project_name') .'/tickets/';
 
     foreach ($code_base_data as $value) {
         echo '
@@ -143,42 +133,3 @@ if (isset($code_base_data[0]['ticket-id'])) {
 }
 echo '
 </div>';
-?>
-<script>
-$(function() {
-    $('.update_ticket_status').click(function() {
-        $.notify({
-            message: 'This Epic is now being updated with data from CodebaseHQ. Once complete, this page will refresh.'
-        },{
-            type: 'info',
-            delay: 10000,
-        });
-        $.ajax({
-            type: 'POST',
-            data: '<?php echo $job['id'] ?>',
-            url: '/job/update_ticket_status/' + <?php echo $job['id'] ?>,
-            success: function(data) {
-                   if (data) {
-                        $.notify({
-                            message: 'CodebaseHQ data Imported Successfully.'
-                        },{
-                            type: 'success'
-                        });
-                        setTimeout(function() {location.reload();}, 2000);
-                   }
-            },
-            error: function(XMLHttpRequest, textStatus, errorThrown) {
-                    $.notify({
-                        // options
-                        message: 'There has been a problem retrieving data from CodebaseHQ.'
-                    },{
-                        // settings
-                        type: 'info',
-                        delay: 500,
-                    });
-            },
-            cache:false
-        });
-    });
-});
-</script>
