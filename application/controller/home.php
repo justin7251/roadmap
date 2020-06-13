@@ -72,19 +72,27 @@ class Home extends Controller
                 array(),
                 array('project_id' => Session::get('current_project_id')),
                 (isset($unchecked_milestone) && count($unchecked_milestone) > 0 ? 'AND `id` NOT IN (' . implode(',', array_values($unchecked_milestone)) . ') ' : '') .
-                'AND actual_date >= NOW() ORDER BY actual_date ASC LIMIT 2');
+                'AND end_date >= NOW() ORDER BY end_date ASC LIMIT 2');
                 
             // future milestone
             $future_milestones = $MilestoneViewModel->get(
                 array(),
                 array('project_id' => Session::get('current_project_id')),
                 (isset($unchecked_milestone) && count($unchecked_milestone) > 0 ? 'AND `id` NOT IN (' . implode(',', array_values($unchecked_milestone)) . ') ' : '') .
-                'AND actual_date >= NOW() ORDER BY actual_date ASC LIMIT 2, 999');
+                'AND end_date >= NOW() ORDER BY end_date ASC LIMIT 2, 999');
         } else {
             // first 2 milestone
-            $milestones = $MilestoneViewModel->get(array(), array('project_id' => Session::get('current_project_id')), 'AND actual_date >= NOW() ORDER BY actual_date ASC LIMIT 2');
+            $milestones = $MilestoneViewModel->get(
+                array(),
+                array('project_id' => Session::get('current_project_id')),
+                'AND end_date >= NOW() ORDER BY end_date ASC LIMIT 2'
+            );
             // future milestone
-            $future_milestones = $MilestoneViewModel->get(array(), array('project_id' => Session::get('current_project_id')), 'AND actual_date >= NOW() ORDER BY actual_date ASC LIMIT 2, 999');
+            $future_milestones = $MilestoneViewModel->get(
+                array(),
+                array('project_id' => Session::get('current_project_id')),
+                'AND end_date >= NOW() ORDER BY end_date ASC LIMIT 2, 999'
+            );
         }
         //check array
         $JobViewModel = new Job_View_Model($this->db);
@@ -170,10 +178,10 @@ class Home extends Controller
         }
         $sql .= "
         (
-            YEAR(`start_date`) = '" . $year . "' OR YEAR(`actual_date`) = '" . $year . "'
+            YEAR(`start_date`) = '" . $year . "' OR YEAR(`end_date`) = '" . $year . "'
         )
         ORDER BY
-            `project_description`, `start_date`, `actual_date`";
+            `project_description`, `start_date`, `end_date`";
 
         $project_details = array();
         $rows = $this->model->raw_query($sql);

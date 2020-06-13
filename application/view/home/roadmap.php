@@ -54,47 +54,21 @@ echo '
 </div>';
 echo '
     <div id="top_container">
-        <div class="pull-right code_base_update">';
-        
-if (Access::get_permission() == 'admin') {
-    echo $form->button(
-        array(
-            'id' => 'codebase_set',
-            'class' => 'no_decoration',
-            'btn-class' => 'btn-primary',
-            'title' => 'Send Data to CodebaseHQ'
-        ),
-        'glyphicon-export',
-        'Send Data to CodebaseHQ'
-    );
-}
-echo $form->button(
-    array(
-        'id' => 'codebase_get',
-        'class' => 'no_decoration',
-        'btn-class' => 'btn-primary',
-        'title' => 'Get CodebaseHQ Data'
-    ),
-    'glyphicon-import',
-    'Get CodebaseHQ Data'
-);
-echo '
-        </div>
     </div>
     <div class="tabbable row justify-content-md-center">';
     
 if ($milestones) {
     $i = 0;
     $count = count($milestones);
-    foreach($milestones as $key => $value) {
+    foreach ($milestones as $key => $value) {
         // calculate the total story point per milestone version
         $total_time = 0;
 
-        if (is_array($value['jobs']) && count($value['jobs']) > 0) {
-            foreach($value['jobs'] as $t) {
-                $total_time += $t['story_points'];
-            }
-        }
+        // if (is_array($value['jobs']) && count($value['jobs']) > 0) {
+        //     foreach($value['jobs'] as $t) {
+        //         $total_time += $t['story_points'];
+        //     }
+        // }
         
         $panel_css = '';
         if (isset($value['story_points']) && $value['id'] != 999) {
@@ -122,7 +96,7 @@ if ($milestones) {
             <div class="panel panel-default" style="' . $panel_css . '">
                 <div class="panel-heading ' . $div_name . '">
                     <h4 class="pull-right margin-top-5 story_points_holder" id="story_points_' . $value['id'] . '">Total Time Available <span class="total_ticket_time">' . $total_time . '</span>'
-            . ($value['id'] != 999 && $i != 2 ? ' / <span class="total_story_points">' . $value['story_points'] . '</span>' : '' ) . ' </h4>
+            . ($value['id'] != 999 && $i != 2 ? ' / <span class="total_story_points">10</span>' : '' ) . ' </h4>
 
                     <h3 class="panel-title">';
                     
@@ -139,9 +113,9 @@ if ($milestones) {
                 <div id="milestone-' . $value['id'] . '">
                     <div class="panel-body">';
                     
-            if (isset($value['actual_date'])) {
+            if (isset($value['end_date'])) {
                 echo '
-                        <div class="milestone_date"><h3>' . date("dS F Y ", strtotime($value['start_date'])) . ' - '. date("dS F Y ", strtotime($value['actual_date'])) . '</h3></div>';
+                        <div class="milestone_date"><h3>' . date("dS F Y ", strtotime($value['start_date'])) . ' - '. date("dS F Y ", strtotime($value['end_date'])) . '</h3></div>';
             }
             echo '
                         <table id="table-' . $div_name . '" class="roadmap_table table">
@@ -150,7 +124,6 @@ if ($milestones) {
                                     <th class="name">Epic</th>
                                     <th class="confidence_level">Confidence Level</th>
                                     <th class="story_points">Estimate</th>
-                                    <th class="status">Status</th>
                                 </tr>
                             </thead>';
                             
@@ -164,8 +137,8 @@ if ($milestones) {
                                 <tr id="drag_drop_item_' . $job['id'] . '" data-milestone="' . $value['id'] . '" style="display: table-row;">
                                     <td class="name padding-top-5"><a href="/job/view/'. $job['id'] .'" target="_blank"><span class="glyphicon btn btn-xs ' . $priorities[$job['priority']] . '" aria-hidden="true"></span></a> ' . $job['name'] . '</td>
                                     <td class="confidence_level padding-top-5">' . $job['confidence_level'] . '</td>
-                                    <td class="story_points padding-top-5">' . $job['story_points'] . '</td>
-                                    <td class="status padding-top-5">' . $job['status'] . '</td>
+                                    <td class="story_points padding-top-5">1</td>
+                
                                 </tr>';
                 }
                 echo '
@@ -245,80 +218,7 @@ echo '
 </div>';
 ?>
 <script>
-    <?php
-        if (Access::get_permission() != 'admin') {
-    ?>
+    <?php if (Access::get_permission() != 'admin') { ?>
             $(".connectedSortable").removeClass("connectedSortable");
-    <?php
-        }
-    ?>
-
-    $('#codebase_set').on('click', function(){
-        var $data = [];
-        $('.connectedSortable tr').each(function(i,e) {
-            if ($(e).data('new-milestone')) {
-                if ($(e).data('milestone') != $(e).data('new-milestone')) {
-                    $data.push($(e).attr('id').replace(/drag_drop_item_/g,""));
-                }
-            }
-        });
-
-        $.notify({
-            message: 'CodebaseHQ Tickets associated with Epics for this Product are now being updated.'
-        },{
-            type: 'info'
-        });
-        var url = "/project/set_all_code_base_data/<?php echo Session::get('current_project_name');?>";
-        $.ajax({
-            type: "POST",
-            url: url,
-                success: function(response) {
-                   if (response) {
-                        $.notify({
-                            message: 'CodebaseHQ Updated Successfully.'
-                        },{
-                            type: 'success'
-                        });
-                   }
-                },
-                error: function(XMLHttpRequest, textStatus, errorThrown) {
-                    $.notify({
-                        message: 'There has been a problem sending data to CodebaseHQ.'
-                    },{
-                        type: 'warning',
-                    });
-                }
-        });
-    });
-    
-    $('#codebase_get').on('click', function(){
-        $.notify({
-            message: 'Information for this Product is now being updated with data from CodebaseHQ. Once complete, this page will refresh.'
-        },{
-            type: 'info',
-            delay: 10000,
-        });
-        var url = "/project/get_all_code_base_data/<?php echo Session::get('current_project_name');?>";
-        $.ajax({
-             type: "POST",
-             url: url,
-                success: function(data) {
-                   if (data) {
-                        $.notify({
-                            message: 'CodebaseHQ data Imported Successfully.'
-                        },{
-                            type: 'success'
-                        });
-                        setTimeout(function() {location.reload();}, 2000);
-                   }
-                },
-                error: function(XMLHttpRequest, textStatus, errorThrown) {
-                    $.notify({
-                        message: 'There has been a problem retrieving data from CodebaseHQ.'
-                    },{
-                        type: 'warning',
-                    });
-                }
-        });
-    });
+    <?php } ?>
 </script>

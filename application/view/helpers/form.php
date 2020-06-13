@@ -17,7 +17,6 @@ class Form
                     <li><a '. ($highlight == 'job' ? ' class="pg_select"': '') .' href="/job/">Epics</a><span class="divider">|</span></li>';
                     
         if (Access::get_permission() == ('admin' || 'limited')) {
-            //<li><a '. ($highlight == 'code_base' ? ' class="pg_select"': '') .' href="/code_base_ticket/">CodebaseHQ Tickets</a><span class="divider">|</span></li>
             echo '
                     <li><a '. ($highlight == 'milestone' ? ' class="pg_select"': '') .' href="/milestone/">Milestones</a><span class="divider">|</span></li>';
         }
@@ -296,11 +295,11 @@ class Form
             echo '
             <div id="milestone-' . $value['id'] . '">
                 <div class="panel-body">';
-                    if (isset($value['actual_date'])) {
+                    if (isset($value['end_date'])) {
                         echo '<div class="milestone_date">
                                 <h3 style="text-align:left">
                                     <span>' . $value['name']. '</span>
-                                    <span class="date_tooltips glyphicon glyphicon-question-sign" title="'. date("dS F Y ", strtotime($value['start_date'])) . ' -  ' . date("dS F Y ", strtotime($value['actual_date'])) . '"></span>
+                                    <span class="date_tooltips glyphicon glyphicon-question-sign" title="'. date("dS F Y ", strtotime($value['start_date'])) . ' -  ' . date("dS F Y ", strtotime($value['end_date'])) . '"></span>
                                     <span class="story_points_holder" id="story_points_' . $value['id'] . '" style="float:right">
                                     <span class="total_ticket_time">' .
                                         $total_time . '</span> / <span class="total_story_points">' . $value['story_points'] . '</span>

@@ -34,7 +34,7 @@ echo '
                 <select class="form-control" name="milestone_id" ' . ($read_only ? 'disabled' : '') . '>
                     <option value="">backlog</option>';
                 
-foreach($milestone_names as $milestone) {
+foreach ($milestone_names as $milestone) {
     echo '
                     <option value="' . $milestone['id'] . '"' . ($milestone['id'] == $job['milestone_id'] ? ' selected': '') . '>' . $milestone['name'] . '</option>'; 
 }
@@ -45,7 +45,7 @@ echo '
                 <label for="priority">Epic Priority</label>
                 <select class="form-control" name="priority" ' . ($read_only ? 'disabled' : '') . '>';
 
-foreach($priorities as $priority) {
+foreach ($priorities as $priority) {
     echo '
                     <option value="' . $priority . '"' . ($priority == $job['priority'] ? ' selected': '') . '>' . $priority . '</option>';
 }
@@ -56,7 +56,7 @@ echo '
                 <label for="confidence_level">Confidence Level</label>
                 <select class="form-control" name="confidence_level" ' . ($read_only ? 'disabled' : '') . '>';
                 
-foreach($confidence_level as $confidence) {
+foreach ($confidence_level as $confidence) {
     echo '
                     <option value="' . $confidence . '"' . ($confidence == $job['confidence_level'] ? ' selected': '') . '>' . $confidence . '</option>';
 }
@@ -79,7 +79,6 @@ if (!$read_only) {
                 <p class="upload_message"></p>
             </div>';
 }
-echo $form->input('CodebaseHQ Tag', 'text', array('name' => 'code_base_tag', 'value' => $job['code_base_tag']));
 echo '
             <div class="form-group">
                 <label for="long_description">Epic Description </label>

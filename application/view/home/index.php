@@ -30,16 +30,6 @@ echo '</div>';
         
         echo $form->button(
             array(
-                'id' => 'codebase_get',
-                'class' => 'no_decoration',
-                'btn-class' => 'btn-primary',
-                'title' => 'Get CodebaseHQ Data'
-            ),
-            'glyphicon-import',
-            'Get CodebaseHQ Data'
-        );
-        echo $form->button(
-            array(
                 'btn-class' => 'btn-success',
                 'title' => 'Configure',
                 'data-toggle' => 'modal',
@@ -115,36 +105,6 @@ echo '
 ?>
 <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 <script type="text/javascript">
-    $('#codebase_get').on('click', function(){
-        $.notify({
-            message: 'Information for this Product is now being updated with data from CodebaseHQ. Once complete, this page will refresh.'
-        },{
-            type: 'info',
-            delay: 10000,
-        });
-        var url = "/project/get_all_code_base_data/<?php echo Session::get('current_project_name');?>";
-        $.ajax({
-             type: "POST",
-             url: url,
-                success: function(data) {
-                   if (data) {
-                        $.notify({
-                            message: 'CodebaseHQ data Imported Successfully.'
-                        },{
-                            type: 'success'
-                        });
-                        setTimeout(function() {location.reload();}, 2000);
-                   }
-                },
-                error: function(XMLHttpRequest, textStatus, errorThrown) {
-                    $.notify({
-                        message: 'There has been a problem retrieving data from CodebaseHQ.'
-                    },{
-                        type: 'warning',
-                    });
-                }
-        });
-    });
 
     google.charts.load('current', {'packages':['gantt']});
     google.charts.setOnLoadCallback(drawChart);

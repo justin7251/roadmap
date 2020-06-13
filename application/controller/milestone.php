@@ -88,9 +88,7 @@ class Milestone extends Controller
         //add WYSIWYG editor
         $this->setViewVar('controller_css', array('bootstrap-wysihtml5.css'));
         $this->setViewVar('controller_js', array('wysihtml5-0.3.0.min.js', 'bootstrap-wysihtml5.js'));
-        $this->setViewVar('priorities', array('1. Must Have', '2. Should Have', '3. Could Have', '4. Would Have'));
-        $this->setViewVar('confidence_level', array('1. High', '2. Medium', '3. Low'));
-        
+
         // get all Milestone names
         $Milestone_Model = new Milestone_Model($this->db);
         $this->setViewVar('milestones', $Milestone_Model->get(array('id','name'), array('project_id' => Session::get('current_project_id')), 'AND active = "Y"'));

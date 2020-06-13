@@ -74,18 +74,6 @@ if (Access::get_permission() == ('admin' || 'limited')) {
     echo '
         <div class="button_container col-md-2 col-sm-12">';
         
-    if (Access::get_permission() != 'limited') {
-        echo $form->button(
-            array(
-                'id' => 'codebase_get',
-                'class' => 'no_decoration',
-                'btn-class' => 'btn-primary pull-right',
-                'title' => 'Get CodebaseHQ Data'
-            ),
-            'glyphicon-import',
-            'Get CodebaseHQ Data'
-        );
-    }
     echo $form->button(
         array(
             'btn-class' => 'btn-primary pull-right btn-adjust-margin',
@@ -106,12 +94,7 @@ if ($jobs) {
                 <th>Name <span class="glyphicon glyphicon-sort gray-lighter"></span></th>
                 <th>Milestone Name <span class="glyphicon glyphicon-sort gray-lighter"></th>
                 <th>Epic Priority <span class="glyphicon glyphicon-sort gray-lighter"></th>
-                <th>CodebaseHQ Tag <span class="glyphicon glyphicon-sort gray-lighter"></th>
-                <th>Number of Tickets <span class="glyphicon glyphicon-sort gray-lighter"></th>
                 <th>Confidence Level <span class="glyphicon glyphicon-sort gray-lighter"></th>
-                <th title="Combined Estimated Time">Estimated Time <span class="glyphicon glyphicon-sort gray-lighter"></th>
-                <th>Time Spent <span class="glyphicon glyphicon-sort gray-lighter"></th>
-                <th>Status <span class="glyphicon glyphicon-sort gray-lighter"></th>
                 <th class="sorter-shortDate dateFormat-ddmmyyyy">Date Added <span class="glyphicon glyphicon-sort gray-lighter"></th>
                 <th colspan="4"></th>
             </tr>
@@ -125,16 +108,13 @@ if ($jobs) {
                 <td>' . $job['name'] . '</td>
                 <td>' . ($job['milestone_name'] ? $job['milestone_name'] : ' - ') . '</td>
                 <td>' . $job['priority'] . '</td>
-                <td>' . $job['code_base_tag'] . '</td>
-                <td>' . $job['tickets'] . '</td>
                 <td>' . $job['confidence_level'] . '</td>
-                <td>' . $job['story_points'] . '</td>
-                <td>' . $job['time_spent'] . '</td>
-                <td>' . $job['status'] . '</td>
                 <td>' . $form->date_time_format($job['create_at']) . '</td>
                 <td>' . $form->button(array('btn-class' => 'btn-info', 'class' => 'view', 'title' => 'View details for this Epic', 'url' => 'job/view/' . $job['id']), 'glyphicon-zoom-in') . '</td>';
 
-            if (Access::get_permission() == ('admin' || 'limited')  && $job['active_milestone'] == 1) {
+            if (Access::get_permission() == ('admin' || 'limited')
+                // && $job['active_milestone'] == 1
+            ) {
                 echo '
                 <td>' . $form->button(array('btn-class' => 'btn-warning', 'title' => 'Copy this Epic', 'url' => 'job/copy/' . $job['id'] ), 'glyphicon-copy') . '</td>
                 <td>' . $form->button(array('btn-class' => 'btn-success', 'title' => 'Modify this Epic', 'url' => 'job/edit/' . $job['id'] ), 'glyphicon-edit') . '</td>';
@@ -155,38 +135,7 @@ echo '
 </div>';
 
 ?>
-<script type="text/javascript">
-    $('#codebase_get').on('click', function(){
-        $.notify({
-            message: 'Information for this Product is now being updated with data from CodebaseHQ. Once complete, this page will refresh.'
-        },{
-            type: 'info',
-            delay: 10000,
-        });
-        var url = "/project/get_all_code_base_data/<?php echo Session::get('current_project_name');?>";
-        $.ajax({
-             type: "POST",
-             url: url,
-                success: function(data) {
-                   if (data) {
-                        $.notify({
-                            message: 'CodebaseHQ data Imported Successfully.'
-                        },{
-                            type: 'success'
-                        });
-                        setTimeout(function() {location.reload();}, 2000);
-                   }
-                },
-                error: function(XMLHttpRequest, textStatus, errorThrown) {
-                    $.notify({
-                        message: 'There has been a problem retrieving data from CodebaseHQ.'
-                    },{
-                        type: 'warning',
-                    });
-                }
-        });
-    });
-    
+<script type="text/javascript">    
     $(window).resize(function() {
         if ($(document).width() > 1752) {
             $('.btn-adjust-margin').addClass('margin-right-5').removeClass('margin-top-5');

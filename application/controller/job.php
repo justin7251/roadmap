@@ -109,29 +109,13 @@ class Job extends Controller
             $MilestoneModel = new Milestone_Model($this->db);
             // get Milestone
             if ($job['milestone_id'] != 0) {
-                if ($related_milestone = $MilestoneModel->get(array('id', 'name', 'description', 'start_date', 'actual_date', 'project_id'), array('id' => $job['milestone_id']))) {
+                if ($related_milestone = $MilestoneModel->get(array('id', 'name', 'goal', 'start_date', 'end_date', 'project_id'), array('id' => $job['milestone_id']))) {
                     $this->setViewVar('related_milestone', current($related_milestone));
                 }
-            }
-            if (isset($job['code_base_tag'])) {
-                $sql = "
-                    SELECT
-                        `Ticket`.*
-                    FROM
-                        `job_ticket_mappings` AS `Mapping`
-                    INNER JOIN `code_base_ticket` AS `Ticket` ON
-                    (
-                        `Ticket`.`ticket-id` = `Mapping`.`code_base_ticket_id`
-                    )
-                    WHERE
-                        `Mapping`.`job_id` = " . $job['id'] . ";";
-                        
-                $code_base_data = $this->model->raw_query($sql);
             }
 
             if ($job) {
                 $this->setViewVar('job', $job);
-                $this->setViewVar('code_base_data', $code_base_data);
             }
             return;
         }

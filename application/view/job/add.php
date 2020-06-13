@@ -55,8 +55,6 @@ echo '
                 <input type="file" name="file_upload" id="file_upload">
                 <p class="upload_message"></p>
             </div>';
-            
-echo $form->input('CodebaseHQ Tag', 'text', array('name' => 'code_base_tag'));
 
 echo '
             <div class="form-group">

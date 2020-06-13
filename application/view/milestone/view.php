@@ -22,22 +22,19 @@ echo '
     <div class="form-container">
         <div class="row">
             <div class="heading">
-                <h2>CodebaseHQ Details</h2>
+                <h2>Details</h2>
             </div>';
 
 echo $form->bootstrap_form('Milestone', $milestone['name']);
-echo $form->bootstrap_form('Description', $milestone['description']);
 echo $form->bootstrap_form('Start Date', $form->date_time_format($milestone['start_date']));
-echo $form->bootstrap_form('End Date', $form->date_time_format($milestone['actual_date']));
+echo $form->bootstrap_form('End Date', $form->date_time_format($milestone['end_date']));
 
 echo '
             <div class="heading">
                 <h2>Project Roadmap Details</h2>
             </div>';
-            
-echo $form->bootstrap_form('Available Story Points', $milestone['story_points']);
-echo $form->bootstrap_form('Internal Patch Notes', $milestone['internal_patch_note']);
-echo $form->bootstrap_form('External Patch Notes', $milestone['external_patch_note']);
+       
+echo $form->bootstrap_form('MileStone Goal', $milestone['goal']);
 
 echo '
         </div>

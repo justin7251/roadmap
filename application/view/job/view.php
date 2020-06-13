@@ -48,21 +48,17 @@ if (isset($related_milestone)) {
             </div>';
             
     echo $form->bootstrap_form('Start Date', $form->date_time_format($related_milestone['start_date']));
-    echo $form->bootstrap_form('End Date', $form->date_time_format($related_milestone['actual_date']));
-    echo $form->bootstrap_form('Description', $related_milestone['description']);
+    echo $form->bootstrap_form('End Date', $form->date_time_format($related_milestone['end_date']));
+    echo $form->bootstrap_form('Milestone Goal', $related_milestone['goal']);
 }
 
 echo '
             <div class="heading">
                 <h2>Features: ' . $job['name'] . '</h2>
             </div>';
-            
-echo $form->bootstrap_form('CodebaseHQ Tag', $job['code_base_tag']);
-echo $form->bootstrap_form('Number of Linked CodebaseHQ Tickets', $job['tickets']);
-echo $form->bootstrap_form('Estimated Time', $job['story_points'] . ' hours');
-echo $form->bootstrap_form('Time Spent', $job['time_spent'] . ' hours');
+
+
 echo $form->bootstrap_form('Confidence Level', $job['confidence_level']);
-echo $form->bootstrap_form('Status', $job['status']);
 echo $form->bootstrap_form('Date Added', $form->date_time_format($job['create_at']));
 echo $form->bootstrap_form('Last Modified Date', $form->date_time_format($job['update_at']));
 
@@ -113,19 +109,6 @@ if (isset($code_base_data[0]['ticket-id'])) {
             </thead>
             <tbody>';
 
-    $code_base_url = Session::get('current_project_name') .'/tickets/';
-
-    foreach ($code_base_data as $value) {
-        echo '
-                <tr>
-                    <td><a href="'. $code_base_url . $value['ticket-id'] .'" target="_blank">' . $value['ticket-id'] . '</a></td>
-                    <td>' . $value['summary'] . '</td>
-                    <td>' . round($value['estimated-time'] / 60, 2). ' hours</td>
-                    <td>' . round($value['total-time-spent'] / 60, 2). ' hours</td>
-                    <td>' . $value['status'] . '</td>
-                    <td>' . $value['ticket-type'] . '</td>
-                </tr>';
-    }
     echo '
             </tbody>
         </table>

@@ -1,22 +1,35 @@
 <?php
+/**
+* /model/milestone_model.php
+*
+* PHP Version 5
+*/
 
+/**
+* The controller class for Milestone
+*
+* @category Milestone
+* @package Roadmap
+* @subpackage Model
+* @author Justin Leung <myjustinleung19@hotmail.com>
+* @copyright 2020
+* @version Release: 1.0
+*/
 class Milestone_Model extends Model
 {
     public $_fields = array(
         'id',
         'name',
-        'description',
-        'internal_patch_note',
-        'external_patch_note',
-        'story_points',
+        'goal',
         'project_id',
         'active',
         'start_date',
-        'actual_date',
+        'end_date',
         'completed',
-        'create_at'
+        'create_at',
+        'deleted',
+        'date_deleted'
     );
     protected $_table = 'milestone';
     
 }
-?>

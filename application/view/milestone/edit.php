@@ -17,7 +17,6 @@ echo '
         
 echo $form->input('', 'hidden', array('name' => 'id', 'value' => $milestone['id']));
 echo $form->input('Milestone Name', 'text', array('name' => 'name', 'value' => $milestone['name'], 'readonly' => true));
-echo $form->input('Available Story Points', 'text', array('name' => 'story_points', 'value' => $milestone['story_points']));
 echo $form->input('Project Name', 'text', array('name' => 'project_name', 'value' => $milestone['project_name'], 'readonly' => true));
 
 echo '
@@ -32,9 +31,9 @@ echo '
         </div>
         
         <div class="form-group">
-            <label for="actual_date">Delivery Date</label>
+            <label for="end_date">End Date</label>
             <div class="input-group datepicker date" id="datetimepicker2">
-                <input name="actual_date" value="' . $form->date_time_format($milestone['actual_date']) . '" type="text" class="form-control" readonly/>
+                <input name="end_date" value="' . $form->date_time_format($milestone['end_date']) . '" type="text" class="form-control" readonly/>
                 <span class="input-group-addon">
                     <span class="glyphicon glyphicon-calendar"></span>
                 </span>
@@ -43,18 +42,8 @@ echo '
 
 echo '
         <div class="form-group">
-            <label for="description">Milestone Description</label>
-            <textarea class="form-control" rows="3" name="description" readonly>' . $milestone['description'] . '</textarea>
-        </div>
-        
-        <div class="form-group">
-            <label for="internal_patch_note">Internal Patch Notes</label>
-            <textarea class="form-control wysiwyg" rows="3" name="internal_patch_note">' . $milestone['internal_patch_note'] . '</textarea>
-        </div>
-        
-        <div class="form-group">
-            <label for="external_patch_note">External Patch Notes</label>
-            <textarea class="form-control wysiwyg" rows="3" name="external_patch_note">' . $milestone['external_patch_note'] . '</textarea>
+            <label for="goal">MileStone Goal</label>
+            <textarea class="form-control wysiwyg" rows="3" name="goal">' . $milestone['goal'] . '</textarea>
         </div>';
                 
 echo $form->submit_button('Submit', 'submit', array('class' => 'btn-primary pull-right'));

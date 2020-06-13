@@ -17,40 +17,38 @@ echo '
         'Add Milestone'
     );
     
-if ($milestones) {
-    echo '
-    <table class="table sortable">
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Description</th>
-                <th>Available Story Points</th>
-                <th class="sorter-shortDate dateFormat-ddmmyyyy">Start Date</th>
-                <th class="sorter-shortDate dateFormat-ddmmyyyy">Delivery Date</th>
-                <th colspan="2"></th>
-            </tr>
-        </thead>
-        <tbody>';
-        
-    foreach ($milestones as $milestone) {
+    if ($milestones) {
         echo '
-            <tr>
-                <td>' . $milestone['name'] . '</td>
-                <td>' . $milestone['description'] . '</td>
-                <td>' . $milestone['story_points'] . '</td>
-                <td>' . ($milestone['start_date'] == null ? 'Not Set' : $form->date_time_format($milestone['start_date'])) . '</td>
-                <td>' . ($milestone['actual_date'] == null ? 'Not Set' : $form->date_time_format($milestone['actual_date'])) . '</td>
-                <td>' . $form->button(array('btn-class' => 'btn-info', 'title' => 'View details for this Milestone', 'url' => 'milestone/view/' . $milestone['id']), 'glyphicon-zoom-in') . '</td>';
-                        
-        if (Access::get_permission() == ('admin' || 'limited')) {
+        <table class="table sortable">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Goal</th>
+                    <th class="sorter-shortDate dateFormat-ddmmyyyy">Start Date</th>
+                    <th class="sorter-shortDate dateFormat-ddmmyyyy">End Date</th>
+                    <th colspan="2"></th>
+                </tr>
+            </thead>
+            <tbody>';
+            
+        foreach ($milestones as $milestone) {
             echo '
-                <td>' . $form->button(array('btn-class' => 'btn-success', 'title' => 'Modify this Milestone', 'url' => 'milestone/edit/' . $milestone['id']), 'glyphicon-edit') . '</td>';
+                <tr>
+                    <td>' . $milestone['name'] . '</td>
+                    <td>' . $milestone['goal'] . '</td>
+                    <td>' . ($milestone['start_date'] == null ? 'Not Set' : $form->date_time_format($milestone['start_date'])) . '</td>
+                    <td>' . ($milestone['end_date'] == null ? 'Not Set' : $form->date_time_format($milestone['end_date'])) . '</td>
+                    <td>' . $form->button(array('btn-class' => 'btn-info', 'title' => 'View details for this Milestone', 'url' => 'milestone/view/' . $milestone['id']), 'glyphicon-zoom-in') . '</td>';
+                            
+            if (Access::get_permission() == ('admin' || 'limited')) {
+                echo '
+                    <td>' . $form->button(array('btn-class' => 'btn-success', 'title' => 'Modify this Milestone', 'url' => 'milestone/edit/' . $milestone['id']), 'glyphicon-edit') . '</td>';
+            }
+            echo '</tr>';
         }
-        echo '</tr>';
+        echo '
+            </tbody>
+            </table>';
     }
-    echo '
-          </tbody>
-        </table>';
-}
 echo '
 </div>';
