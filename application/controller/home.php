@@ -195,7 +195,9 @@ class Home extends Controller
         $this->setViewVar('project_details', $project_details);
         $this->setViewVar('year', $year);
         $this->setViewVar('projects_selected', $projects_selected);
-        $this->setViewVar('story_points', $story_points);
+        if ($story_points) {
+            $this->setViewVar('story_points', $story_points);
+        }
         $this->setViewVar('link', $link);
         
         $three_year = array(

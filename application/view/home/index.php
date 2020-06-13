@@ -12,13 +12,13 @@ foreach ($project_details as $project_id => $project) {
         $start_date[1]--;
         $start_date = implode(', ', $start_date);
         
-        $actual_date = explode('-', substr($milestone['actual_date'], 0, 10));
-        $actual_date[1]--;
-        $actual_date = implode(', ', $actual_date);
+        $end_date = explode('-', substr($milestone['end_date'], 0, 10));
+        $end_date[1]--;
+        $end_date = implode(', ', $end_date);
         
-        $rows[] = "['" . $milestone['id'] . "', '" . addslashes($milestone['name']) . " (" . $milestone['story_points'] . ")', '" . addslashes($project['name']) . "', "
-            . "new Date(" . $start_date . "), new Date(" . $actual_date . "), "
-            . "null, " . ($milestone['progress'] * 1) . ", " . ($link && array_key_exists($project['name'], $previous) ? "'" . $previous[$project['name']] . "'" : "null") . "]";
+        $rows[] = "['" . $milestone['id'] . "', '" . addslashes($milestone['name']) . " (10)', '" . addslashes($project['name']) . "', "
+            . "new Date(" . $start_date . "), new Date(" . $end_date . "), "
+            . "null, " . (1 * 1) . ", " . ($link && array_key_exists($project['name'], $previous) ? "'" . $previous[$project['name']] . "'" : "null") . "]";
             
         $previous[$project['name']] = $milestone['id'];
     }
