@@ -549,7 +549,8 @@ table.sortable th {
 }
 /*********summary**********/
 .full-height {
-    height: 100%;
+    width: 100%;
+    min-height: 450px;
 }
 #chart_div {
     margin-top: 50px;
