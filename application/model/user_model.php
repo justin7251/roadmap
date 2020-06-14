@@ -11,8 +11,7 @@ class User_Model extends Model
     public function check_password($post)
     {
         $current_user = $this->get(array(''), array('email' => $post['email'], 'password' => $this->encryption($post['password'])));
-        
-        if ($current_user[0]['id']) {
+        if ($current_user && $current_user[0]['id']) {
             $current_user = current($current_user);
             $user = array(
                 'id' => $current_user['id'],

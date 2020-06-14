@@ -18,12 +18,13 @@ echo '
 echo $form->input('', 'hidden', array('name' => 'id', 'value' => $milestone['id']));
 echo $form->input('Milestone Name', 'text', array('name' => 'name', 'value' => $milestone['name'], 'readonly' => true));
 echo $form->input('Project Name', 'text', array('name' => 'project_name', 'value' => $milestone['project_name'], 'readonly' => true));
+echo $form->input('Story Points', 'text', array('name' => 'story_points', 'value' => $milestone['story_points']));
 
 echo '
         <div class="form-group">
             <label for="start_date">Start Date</label>
             <div class="input-group datepicker date" id="datetimepicker1">
-                <input name="start_date" value="' . $form->date_time_format($milestone['start_date']) . '" type="text" class="form-control"  readonly/>
+                <input name="start_date" value="' . $form->date_time_format($milestone['start_date']) . '" type="text" class="form-control"/>
                 <span class="input-group-addon">
                     <span class="glyphicon glyphicon-calendar"></span>
                 </span>
@@ -33,7 +34,7 @@ echo '
         <div class="form-group">
             <label for="end_date">End Date</label>
             <div class="input-group datepicker date" id="datetimepicker2">
-                <input name="end_date" value="' . $form->date_time_format($milestone['end_date']) . '" type="text" class="form-control" readonly/>
+                <input name="end_date" value="' . $form->date_time_format($milestone['end_date']) . '" type="text" class="form-control"op/>
                 <span class="input-group-addon">
                     <span class="glyphicon glyphicon-calendar"></span>
                 </span>

@@ -27,6 +27,7 @@ echo '
 echo $form->input('Epic Name', 'text', array('field_class' => 'required', 'name' => 'name', 'value' => $job['name'], 'required' => true));
 echo $form->input('Project Name', 'text', array('name' => 'project_name', 'value' => Session::get('current_project_description'), 'readonly' => true));
 echo $form->input('', 'hidden', array('name' => 'project_id', 'value' => Session::get('current_project_id'), 'readonly' => true));
+echo $form->input('Estimate', 'text', array('field_class' => 'required', 'name' => 'estimate', 'value' => $job['estimate'], 'required' => true));
 echo $form->input('', 'hidden', array('name' => 'id', 'value' => $job['id'], 'readonly' => true));
 
 echo '

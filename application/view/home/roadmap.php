@@ -96,7 +96,7 @@ if ($milestones) {
             <div class="panel panel-default" style="' . $panel_css . '">
                 <div class="panel-heading ' . $div_name . '">
                     <h4 class="pull-right margin-top-5 story_points_holder" id="story_points_' . $value['id'] . '">Total Time Available <span class="total_ticket_time">' . $total_time . '</span>'
-            . ($value['id'] != 999 && $i != 2 ? ' / <span class="total_story_points">10</span>' : '' ) . ' </h4>
+            . ($value['id'] != 999 && $i != 2 ? ' / <span class="total_story_points">' . $value['story_points'] . '</span>' : '' ) . ' </h4>
 
                     <h3 class="panel-title">';
                     
@@ -137,7 +137,7 @@ if ($milestones) {
                                 <tr id="drag_drop_item_' . $job['id'] . '" data-milestone="' . $value['id'] . '" style="display: table-row;">
                                     <td class="name padding-top-5"><a href="/job/view/'. $job['id'] .'" target="_blank"><span class="glyphicon btn btn-xs ' . $priorities[$job['priority']] . '" aria-hidden="true"></span></a> ' . $job['name'] . '</td>
                                     <td class="confidence_level padding-top-5">' . $job['confidence_level'] . '</td>
-                                    <td class="story_points padding-top-5">1</td>
+                                    <td class="story_points padding-top-5">' . $job['estimate'] . '</td>
                 
                                 </tr>';
                 }

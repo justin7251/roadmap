@@ -72,26 +72,26 @@ class Home extends Controller
                 array(),
                 array('project_id' => Session::get('current_project_id')),
                 (isset($unchecked_milestone) && count($unchecked_milestone) > 0 ? 'AND `id` NOT IN (' . implode(',', array_values($unchecked_milestone)) . ') ' : '') .
-                'AND end_date >= NOW() ORDER BY end_date ASC LIMIT 2');
+                'AND end_date >= CURDATE() ORDER BY end_date ASC LIMIT 2');
                 
             // future milestone
             $future_milestones = $MilestoneViewModel->get(
                 array(),
                 array('project_id' => Session::get('current_project_id')),
                 (isset($unchecked_milestone) && count($unchecked_milestone) > 0 ? 'AND `id` NOT IN (' . implode(',', array_values($unchecked_milestone)) . ') ' : '') .
-                'AND end_date >= NOW() ORDER BY end_date ASC LIMIT 2, 999');
+                'AND end_date >= CURDATE() ORDER BY end_date ASC LIMIT 2, 999');
         } else {
             // first 2 milestone
             $milestones = $MilestoneViewModel->get(
                 array(),
                 array('project_id' => Session::get('current_project_id')),
-                'AND end_date >= NOW() ORDER BY end_date ASC LIMIT 2'
+                'AND end_date >= CURDATE() ORDER BY end_date ASC LIMIT 2'
             );
             // future milestone
             $future_milestones = $MilestoneViewModel->get(
                 array(),
                 array('project_id' => Session::get('current_project_id')),
-                'AND end_date >= NOW() ORDER BY end_date ASC LIMIT 2, 999'
+                'AND end_date >= CURDATE() ORDER BY end_date ASC LIMIT 2, 999'
             );
         }
         //check array

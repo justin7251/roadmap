@@ -12,9 +12,9 @@ class Home_Model extends Model
         $count = 0;
         $milestone_ticket = array();
 
-        foreach($milestones as $milestone) {
-            $count += 1; 
-            foreach($tickets as $ticket) {
+        foreach ($milestones as $milestone) {
+            $count += 1;
+            foreach ($tickets as $ticket) {
                 if ($ticket['milestone_name'] == $milestone['name']){
                     if ( $count < 2) {
                         $ticket['title'] = 'Plan Of Record ' . $milestone['name'];

@@ -11,6 +11,7 @@ class Job_Model extends Model
         'priority',
         'code_base_tag',
         'file_path',
+        'estimate',
         'confidence_level',
         'job_order',
         'create_at',

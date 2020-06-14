@@ -94,6 +94,7 @@ if ($jobs) {
                 <th>Name <span class="glyphicon glyphicon-sort gray-lighter"></span></th>
                 <th>Milestone Name <span class="glyphicon glyphicon-sort gray-lighter"></th>
                 <th>Epic Priority <span class="glyphicon glyphicon-sort gray-lighter"></th>
+                <th>Estimate <span class="glyphicon glyphicon-sort gray-lighter"></th>
                 <th>Confidence Level <span class="glyphicon glyphicon-sort gray-lighter"></th>
                 <th class="sorter-shortDate dateFormat-ddmmyyyy">Date Added <span class="glyphicon glyphicon-sort gray-lighter"></th>
                 <th colspan="4"></th>
@@ -107,6 +108,7 @@ if ($jobs) {
             <tr id="drag_drop_item_' . $job['id'] . '">
                 <td>' . $job['name'] . '</td>
                 <td>' . ($job['milestone_name'] ? $job['milestone_name'] : ' - ') . '</td>
+                <td>' . $job['estimate'] . '</td>
                 <td>' . $job['priority'] . '</td>
                 <td>' . $job['confidence_level'] . '</td>
                 <td>' . $form->date_time_format($job['create_at']) . '</td>

@@ -23,6 +23,7 @@ class Milestone_Model extends Model
         'goal',
         'project_id',
         'active',
+        'story_points',
         'start_date',
         'end_date',
         'completed',

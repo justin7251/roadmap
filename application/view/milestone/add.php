@@ -27,6 +27,7 @@ echo '
         <form action="/milestone/add" method="POST">';
         
 echo $form->input('Milestone Name', 'text', array('field_class' => 'required', 'name' => 'name', 'required' => true));
+echo $form->input('Story Points', 'text', array('field_class' => 'required', 'name' => 'story_points', 'required' => true));
 echo '
     <div class="form-group">
         <label for="start_date">Start Date</label>

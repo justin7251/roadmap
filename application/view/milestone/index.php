@@ -24,6 +24,7 @@ echo '
                 <tr>
                     <th>Name</th>
                     <th>Goal</th>
+                    <th>Story Points</th>
                     <th class="sorter-shortDate dateFormat-ddmmyyyy">Start Date</th>
                     <th class="sorter-shortDate dateFormat-ddmmyyyy">End Date</th>
                     <th colspan="2"></th>
@@ -36,6 +37,7 @@ echo '
                 <tr>
                     <td>' . $milestone['name'] . '</td>
                     <td>' . $milestone['goal'] . '</td>
+                    <td>' . $milestone['story_points'] . '</td>
                     <td>' . ($milestone['start_date'] == null ? 'Not Set' : $form->date_time_format($milestone['start_date'])) . '</td>
                     <td>' . ($milestone['end_date'] == null ? 'Not Set' : $form->date_time_format($milestone['end_date'])) . '</td>
                     <td>' . $form->button(array('btn-class' => 'btn-info', 'title' => 'View details for this Milestone', 'url' => 'milestone/view/' . $milestone['id']), 'glyphicon-zoom-in') . '</td>';

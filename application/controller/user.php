@@ -176,11 +176,9 @@ class User extends Controller
     */
     public function login_post()
     {
-        prr(URL);
         // if we have POST data to create a new user entry
         if (isset($_POST["submit_compare_user"])) {
-            if ($this->model->check_password($_POST)) {
-                $user = $this->model->check_password($_POST);
+            if ($user = $this->model->check_password($_POST)) {
                 $this->model->raw_query("
                     UPDATE
                         `user`
@@ -192,7 +190,6 @@ class User extends Controller
                 Session::set('user', $user);
                 $user_level = $this->model->raw_query("SELECT * FROM `user_level`");
                 Session::set('user_level', $user_level);
-
                 header('location: ' . URL);
             } else {
                 $this->error = 'You have entered an invalid username or password';

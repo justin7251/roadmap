@@ -16,8 +16,7 @@ foreach ($project_details as $project_id => $project) {
         $end_date[1]--;
         $end_date = implode(', ', $end_date);
         $start_end_date_diff = round(abs(strtotime($milestone['end_date']) - strtotime($milestone['start_date']))/86400);
-        
-        $rows[] = "['" . $milestone['id'] . "', '" . addslashes($milestone['name']) . " (10)', '" . addslashes($project['name']) . "', "
+        $rows[] = "['" . $milestone['id'] . "', '" . addslashes($milestone['name']) . " (". $milestone['story_points'] .")', '" . addslashes($project['name']) . "', "
             . "new Date(" . $start_date . "), new Date(" . $end_date . "), "
             . "null, " . round(($start_end_date_diff - $milestone['progress'])/ $start_end_date_diff * 100) . ", " . ($link && array_key_exists($project['name'], $previous) ? "'" . $previous[$project['name']] . "'" : "null") . "]";
             
