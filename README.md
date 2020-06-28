@@ -1,7 +1,7 @@
 # Roadmap
 
 The roadmap is a simple tracking tool built by PHP. For the periphery of the roadmap which represents as Features, Epics, and Milestones.
-A milestone is a marker of a stage in a project. Epic is the outline of the feature that highlight the task. 
+A milestone is a marker of a stage in a project. Epic is the outline of the feature that highlights the task. 
 
 <img src="public/img/delivery_timeline.png" height="500">
 <img src="public/img/product_roadmap.PNG" height="500">
