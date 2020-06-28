@@ -8,6 +8,10 @@ A milestone is a marker of a stage in a project. Epic is the outline of the feat
 ![](public/img/milestone.PNG | width=100)
 ![](public/img/epic.PNG | width=100)
 
+<img src="public/img/delivery_timeline.png" height="100">
+
+
+
 
 # Installation
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
