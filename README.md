@@ -1,9 +1,12 @@
 # Roadmap
 
-Roadmap is an simple and easy to use roadmap planning tools. Roadmap is a plan for me to plan my work over weeks and months.
-Its really useful for me to set a goal and view the acheivement that I have got.
+The roadmap is a simple tracking tool built by PHP. For the periphery of the roadmap, these are represented as Features, Epics, and Milestones.
+A milestone is a marker of a stage in a project. Epic is the outline of the feature that highlight the task. 
 
 ![](public/img/delivery_timeline.png)
+![](public/img/product_roadmap.PNG)
+![](public/img/milestone.PNG)
+![](public/img/epic.PNG)
 
 # Installation
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
@@ -19,8 +22,8 @@ When the project is runing you can use this test account for your first login
 
 ## Built With
 
-* [Mini](https://github.com/panique/mini) - The web framework used
-* [Wysihtml5](https://github.com/xing/wysihtml5/) - Adding style on textarea
+* [Mini](https://github.com/panique/mini) - The PHP Web Framework used
+* [Wysihtml5](https://github.com/xing/wysihtml5/) - Adding HTML markup on textarea
 
 
 
